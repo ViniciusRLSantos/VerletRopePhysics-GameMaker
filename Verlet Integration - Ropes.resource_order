@@ -23,6 +23,5 @@
     {"name":"Defines","order":5,"path":"scripts/Defines/Defines.yy",},
     {"name":"Vector2","order":4,"path":"scripts/Vector2/Vector2.yy",},
     {"name":"Verlet","order":4,"path":"scripts/Verlet/Verlet.yy",},
-    {"name":"sCamera_1","order":1,"path":"sprites/sCamera_1/sCamera_1.yy",},
   ],
 }

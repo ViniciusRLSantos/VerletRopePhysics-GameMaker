@@ -43,7 +43,6 @@
     {"id":{"name":"Defines","path":"scripts/Defines/Defines.yy",},},
     {"id":{"name":"Vector2","path":"scripts/Vector2/Vector2.yy",},},
     {"id":{"name":"Verlet","path":"scripts/Verlet/Verlet.yy",},},
-    {"id":{"name":"sCamera_1","path":"sprites/sCamera_1/sCamera_1.yy",},},
     {"id":{"name":"sCamera","path":"sprites/sCamera/sCamera.yy",},},
     {"id":{"name":"sPlayer","path":"sprites/sPlayer/sPlayer.yy",},},
   ],
