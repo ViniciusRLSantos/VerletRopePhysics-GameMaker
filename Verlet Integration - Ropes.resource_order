@@ -21,7 +21,9 @@
   "ResourceOrderSettings":[
     {"name":"oRope","order":2,"path":"objects/oRope/oRope.yy",},
     {"name":"Defines","order":5,"path":"scripts/Defines/Defines.yy",},
+    {"name":"Utility","order":6,"path":"scripts/Utility/Utility.yy",},
     {"name":"Vector2","order":4,"path":"scripts/Vector2/Vector2.yy",},
     {"name":"Verlet","order":4,"path":"scripts/Verlet/Verlet.yy",},
+    {"name":"sHairBall","order":2,"path":"sprites/sHairBall/sHairBall.yy",},
   ],
 }

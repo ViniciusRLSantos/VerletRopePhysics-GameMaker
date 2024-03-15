@@ -16,12 +16,14 @@ switch(draw_mode) {
 	break;
 	
 	case 2:
-		
+		/*
 		draw_set_color(c_black);
 		mouse_rope.draw_hair(5, 3);
 		draw_set_color(#AC3232);
 		mouse_rope.draw_hair(4, 2);
-		draw_sprite(sPlayer, 0, x+2, y+1);
+		*/
+		mouse_rope.draw_hair_sprite(0.4);
+		draw_sprite(sPlayer, 0, x, y-1);
 	break;
 }
 draw_set_color(c_white);
