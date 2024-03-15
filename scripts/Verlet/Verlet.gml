@@ -1,19 +1,19 @@
 ///@function VerletRope(start_position, ropeLength, constrain, gravity_vector, dampening, pin_start, pin_end)
-///@param {Struct.Vector2} initial_position
+///@param {Array} initial_position
 ///@param {Real} rope_length
 ///@param {Real} constrain
-///@param {Struct.Vector2} gravity
+///@param {Array} gravity
 ///@param {Real} dampening
 ///@param {Bool} start_pin
 ///@param {Bool} end_pin
 ///@description Creates a rope object using verlet integration
 function VerletRope(
-	_pos=new Vector2(), _ropeLength=30, _constrain=1, _gravity=new Vector2(0, 0.5), _dampening=0.9, _startPin=true, _endPin=true
+	_pos=Vector2(), _ropeLength=30, _constrain=1, _gravity=Vector2(0, 0.5), _dampening=0.9, _startPin=true, _endPin=true
 ) constructor {
 	ropeLength = _ropeLength;
 	constrain = _constrain;
-	gravity = _gravity;
-	force = new Vector2(0, 0);
+	grav = _gravity;
+	force = Vector2();
 	dampening = _dampening;
 	startPin = _startPin;
 	endPin = _endPin;
@@ -21,15 +21,15 @@ function VerletRope(
 	position = _pos;
 	pointCount = ceil(ropeLength/constrain);
     for (var i=0; i<pointCount; i++) {
-        pos[i] = position.add(constrain*i, 0);
-        pos_previous[i] = position.add(constrain*i, 0);
+        pos[i] = vec2_add(position, [constrain*i, 0]);
+        pos_previous[i] = vec2_add(position, [constrain*i, 0]);
     }
     
     static resize_rope = function(_newLength) {
 		ropeLength = _newLength;
 		pointCount = ceil(ropeLength/constrain);
-	    pos[pointCount-1] = pos[pointCount-2].add(constrain*(pointCount-1), 0);
-	    pos_previous[pointCount-1] = pos[pointCount-2].add(constrain*(pointCount-1), 0);
+	    pos[pointCount-1] = vec2_add(pos[pointCount-2], [constrain*pointCount-1, 0]);
+	    pos_previous[pointCount-1] = vec2_add(pos[pointCount-2], [constrain*pointCount-1, 0]);
 	}
 	
     static update_points = function() {
@@ -37,11 +37,11 @@ function VerletRope(
             if (i!=0 && i!=pointCount-1)
             || (i==0 && !startPin)
             || (i==pointCount-1 && !endPin) {
-                var vel = new Vector2((pos[i].x - pos_previous[i].x)*dampening, (pos[i].y - pos_previous[i].y)*dampening);
+                var vel = Vector2((pos[i][X] - pos_previous[i][X])*dampening, (pos[i][Y] - pos_previous[i][Y])*dampening);
 				
-				var temp = { x: pos[i].x, y: pos[i].y };
-				pos[i].Add(vel.x + gravity.x + force.x, vel.y + gravity.y + force.y);
-                pos_previous[i].Set(temp.x, temp.y);
+				var temp = Vector2(pos[i][X], pos[i][Y]);
+				pos[i] = vec2_add(pos[i], [ vel[X] + grav[X] + force[X], vel[Y] + grav[Y] + force[Y] ]);
+                pos_previous[i] = temp;
             }
         }
     }
@@ -50,26 +50,26 @@ function VerletRope(
         for (var i=0; i<pointCount; i++) {
             if (i == pointCount-1) continue;
             
-            var distance = pos[i].distance_to(pos[i+1]);
+            var distance = vec2_distance(pos[i], pos[i+1]);
             var diff = constrain - distance;
             var percent = diff/distance;
-            var vec2 = pos[i+1].add(-pos[i].x, -pos[i].y)
+            var vec2 = vec2_subtract(pos[i+1], pos[i]);
             
             if (i==0) {
                 if (startPin) {
-                    pos[i+1].Add(vec2.x*percent, vec2.y*percent);
+                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent, vec2[Y]*percent ]);
                 } else {
-                    pos[i].Add(-vec2.x*percent/2, -vec2.y*percent/2);
-                    pos[i+1].Add(vec2.x*percent/2, vec2.y*percent/2);
+                    pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
+                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
                 }
             } else if (i == pointCount-1) {
                 continue;
             } else {
                 if ((i+1) == pointCount-1 && endPin) {
-                    pos[i].Add(-vec2.x*percent, -vec2.y*percent);
+                	pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent, vec2[Y]*percent ]);
                 } else {
-                    pos[i].Add(-vec2.x*percent/2, -vec2.y*percent/2);
-                    pos[i+1].Add(vec2.x*percent/2, vec2.y*percent/2);
+                    pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
+                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent/2, vec2[Y]*percent/2 ])
                 }
             }
         }
@@ -77,14 +77,13 @@ function VerletRope(
 	
 	static draw_points_line = function(radius=pointCount) {
 	    for (var i=0; i<pointCount-1; i++) {
-			draw_line_width(pos[i].x, pos[i].y, pos[i+1].x, pos[i+1].y, radius);
-	        //draw_circle(pos[i].x, pos[i].y, 2, false);
+			draw_line_width(pos[i][X], pos[i][Y], pos[i+1][X], pos[i+1][Y], radius);
 	    }
 	}
 	
 	static draw_points_circle = function(radius=pointCount) {
 	    for (var i=0; i<pointCount; i++) {
-	        draw_circle(pos[i].x, pos[i].y, (radius)/2, false);
+	        draw_circle(pos[i][X], pos[i][Y], (radius)/2, false);
 	    }
 	}
 	
@@ -97,7 +96,7 @@ function VerletRope(
 			var dist = min(ropeLength, pos[i].distance_to(pos[0]))
 			var percent = (ropeLength-dist)/ropeLength;
 			var r = max(min_radius, floor(percent*radius))
-	        draw_circle(pos[i].x, pos[i].y, (r), false);
+	        draw_circle(pos[i][X], pos[i][Y], (r), false);
 	    }
 	}
 	
@@ -111,10 +110,10 @@ function VerletRope(
 		surface_set_target(_hair_surf);
 		draw_clear_alpha(c_black, 0.0);
 			for (var i=pointCount-1; i>=0; i--) {
-				var dist = min(ropeLength, pos[i].distance_to(pos[0]));
+				var dist = min(ropeLength, vec2_distance(pos[i], pos[0]));
 				var percent = (ropeLength-dist)/ropeLength;
 				var _scale = max(min_scale, percent);
-				draw_sprite_ext(sHairBall, 0, pos[i].x, pos[i].y, _scale, _scale, 0, c_white, 1);
+				draw_sprite_ext(sHairBall, 0, pos[i][X], pos[i][Y], _scale, _scale, 0, c_white, 1);
 			}
 		surface_reset_target();
 		
