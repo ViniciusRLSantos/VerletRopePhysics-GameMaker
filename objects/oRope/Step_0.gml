@@ -8,7 +8,7 @@ if (y < room_height/2) {
 	mouse_rope.force[X] = wave(-2, -5, 1.1);
 	mouse_rope.force[Y] = wave(-0.5, -0.75, 1.1);
 } else {
-	mouse_rope.force[X] = lerp(mouse_rope.force[X], -0.8, 0.1);
+	mouse_rope.force[X] = lerp(mouse_rope.force[X], -0.8*(draw_mode==2), 0.1);
 	mouse_rope.force[Y] = lerp(mouse_rope.force[Y], 0, 0.1);
 }
 

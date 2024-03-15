@@ -1,3 +1,13 @@
+draw_set_color(c_lime);
+draw_set_alpha(0.125);
+	draw_rectangle(0, 0, RESOLUTION_W, RESOLUTION_H/2, false);
+draw_set_alpha(0.45);
+draw_set_color(c_white);
+	draw_set_halign(fa_center);
+		draw_text(RESOLUTION_W/2, RESOLUTION_H/4, "Wind Area");
+	draw_set_halign(fa_left);
+draw_set_alpha(1);
+
 switch(draw_mode) {
 	case 0:
 		draw_set_color(c_black);

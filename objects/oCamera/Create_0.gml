@@ -6,7 +6,7 @@ application_surface_enable(false);
 
 game_width = RESOLUTION_W;
 game_height = RESOLUTION_H;
-scale = 4;
+scale = 5;
 
 //window_set_fullscreen(true);
 window_set_size(game_width*scale, game_height*scale);
