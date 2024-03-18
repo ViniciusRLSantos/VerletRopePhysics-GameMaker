@@ -32,7 +32,7 @@ switch(draw_mode) {
 		draw_set_color(#AC3232);
 		mouse_rope.draw_hair(4, 2);
 		*/
-		mouse_rope.draw_hair_sprite(0.35);
+		mouse_rope.draw_hair_sprite(0.3);
 		draw_sprite(sPlayer, 0, x, y-1);
 	break;
 }

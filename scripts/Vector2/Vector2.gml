@@ -15,11 +15,13 @@ function vec2_add(v1, v2) {
     return [ v1[X]+v2[X], v1[Y]+v2[Y] ];
 }
 
+
 ///@function vec2_subtract(v1, v2)
 ///@returns {Array}
 function vec2_subtract(v1, v2) {
     return [ v1[X]-v2[X], v1[Y]-v2[Y] ];
 }
+
 
 ///@function vec2_product(vec2, scalar)
 ///@returns {Array}
@@ -27,11 +29,13 @@ function vec2_product(vec2, scalar) {
     return [ vec2[X]*scalar, vec2[Y]*scalar ];
 }
 
+
 ///@function vec2_distance(v1, v2)
 ///@returns {Real}
 function vec2_distance(v1, v2) {
     return point_distance(v1[X], v1[Y], v2[X], v2[Y]);
 }
+
 
 ///@function vec2_length(vec2)
 ///@returns {Real}

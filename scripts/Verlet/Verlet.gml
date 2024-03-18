@@ -21,15 +21,15 @@ function VerletRope(
 	position = _pos;
 	pointCount = ceil(ropeLength/constrain);
     for (var i=0; i<pointCount; i++) {
-        pos[i] = vec2_add(position, [constrain*i, 0]);
-        pos_previous[i] = vec2_add(position, [constrain*i, 0]);
+        pos[i] = vec2_add(position, Vector2(constrain*i, 0));
+        pos_previous[i] = vec2_add(position, Vector2(constrain*i, 0));
     }
     
     static resize_rope = function(_newLength) {
 		ropeLength = _newLength;
 		pointCount = ceil(ropeLength/constrain);
-	    pos[pointCount-1] = vec2_add(pos[pointCount-2], [constrain*pointCount-1, 0]);
-	    pos_previous[pointCount-1] = vec2_add(pos[pointCount-2], [constrain*pointCount-1, 0]);
+	    pos[pointCount-1] = vec2_add(pos[pointCount-2], Vector2(constrain*pointCount-1, constrain*pointCount-1));
+	    pos_previous[pointCount-1] = vec2_add(pos[pointCount-2], Vector2(constrain*pointCount-1, constrain*pointCount-1));
 	}
 	
     static update_points = function() {
@@ -40,7 +40,7 @@ function VerletRope(
                 var vel = Vector2((pos[i][X] - pos_previous[i][X])*dampening, (pos[i][Y] - pos_previous[i][Y])*dampening);
 				
 				var temp = Vector2(pos[i][X], pos[i][Y]);
-				pos[i] = vec2_add(pos[i], [ vel[X] + grav[X] + force[X], vel[Y] + grav[Y] + force[Y] ]);
+				pos[i] = vec2_add(pos[i], Vector2(vel[X] + grav[X] + force[X], vel[Y] + grav[Y] + force[Y]));
                 pos_previous[i] = temp;
             }
         }
@@ -57,19 +57,19 @@ function VerletRope(
             
             if (i==0) {
                 if (startPin) {
-                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent, vec2[Y]*percent ]);
+                    pos[i+1] = vec2_add(pos[i+1], Vector2(vec2[X]*percent, vec2[Y]*percent));
                 } else {
-                    pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
-                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
+                    pos[i] = vec2_subtract(pos[i], Vector2(vec2[X]*percent/2, vec2[Y]*percent/2));
+                    pos[i+1] = vec2_add(pos[i+1], Vector2(vec2[X]*percent/2, vec2[Y]*percent/2));
                 }
             } else if (i == pointCount-1) {
                 continue;
             } else {
                 if ((i+1) == pointCount-1 && endPin) {
-                	pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent, vec2[Y]*percent ]);
+                	pos[i] = vec2_subtract(pos[i], Vector2(vec2[X]*percent, vec2[Y]*percent));
                 } else {
-                    pos[i] = vec2_subtract(pos[i], [ vec2[X]*percent/2, vec2[Y]*percent/2 ]);
-                    pos[i+1] = vec2_add(pos[i+1], [ vec2[X]*percent/2, vec2[Y]*percent/2 ])
+                    pos[i] = vec2_subtract(pos[i], Vector2(vec2[X]*percent/2, vec2[Y]*percent/2));
+                    pos[i+1] = vec2_add(pos[i+1], Vector2(vec2[X]*percent/2, vec2[Y]*percent/2))
                 }
             }
         }
@@ -110,26 +110,17 @@ function VerletRope(
 		surface_set_target(_hair_surf);
 		draw_clear_alpha(c_black, 0.0);
 			for (var i=pointCount-1; i>=0; i--) {
-				var dist = min(ropeLength, vec2_distance(pos[i], pos[0]));
-				var percent = (ropeLength-dist)/ropeLength;
+				var len = ropeLength*2;
+				var dist = min(len, vec2_distance(pos[i], pos[0]));
+				var percent = (len-dist)/len;
 				var _scale = max(min_scale, percent);
-				draw_sprite_ext(sHairBall, 0, pos[i][X], pos[i][Y], _scale, _scale, 0, c_white, 1);
+				draw_sprite_ext(sHairBall, sign(i), pos[i][X], pos[i][Y], _scale, _scale, 0, c_white, 1);
 			}
 		surface_reset_target();
 		
-		shader_set(shdOutline);
-		var _color = shader_get_uniform(shdOutline, "outlineColor");
-		shader_set_uniform_f(_color, 0.0, 0.0, 0.0);
-		
-		var _ratioW = surface_get_width(_hair_surf)/sprite_get_width(sHairBall);
-		var _ratioH = surface_get_height(_hair_surf)/sprite_get_height(sHairBall);
-		
-		var _width = shader_get_uniform(shdOutline, "outlineW");
-		shader_set_uniform_f(_width, 1/(sprite_get_width(sHairBall)*_ratioW));
-		var _height = shader_get_uniform(shdOutline, "outlineH");
-		shader_set_uniform_f(_height, 1/(sprite_get_height(sHairBall)*_ratioH));
+		outline_begin(surface_get_width(_hair_surf), surface_get_height(_hair_surf));
 			draw_surface(_hair_surf, 0, 0);
-		shader_reset();
+		outline_end();
 		surface_free(_hair_surf);
 	}
 	
